@@ -147,7 +147,6 @@ def feed_osd():
 def feed_search():
     term = request.args.get("query")
     if term:
-        random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
         entries = db.session.query(db.Books).filter(db.or_(db.Books.tags.any(db.Tags.name.like("%"+term+"%")),db.Books.authors.any(db.Authors.name.like("%"+term+"%")),db.Books.title.like("%"+term+"%"))).all()
         xml = render_template('feed.xml', searchterm=term, entries=entries)
     else:
@@ -223,7 +222,6 @@ def index(page):
 @app.route("/hot", defaults={'page': 1})
 @app.route('/hot/page/<int:page>')
 def hot_books(page):
-    random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
     # if page == 1:
     #     entries = db.session.query(db.Books).filter(db.Books.ratings.any(db.Ratings.rating > 9)).order_by(db.Books.last_modified.desc()).limit(config.NEWEST_BOOKS)
     # else:
@@ -238,7 +236,7 @@ def hot_books(page):
         entries.append(db.session.query(db.Books).filter(db.Books.id == book.Downloads.book_id).first())
 
     pagination = Pagination(page, config.NEWEST_BOOKS, len(all_books.all()))
-    return render_template('index.html', random=random, entries=entries, pagination=pagination, title="Hot Books (most downloaded)")
+    return render_template('index.html', entries=entries, pagination=pagination, title="Hot Books (most downloaded)")
 
 @app.route("/stats")
 def stats():
@@ -272,18 +270,16 @@ def category_list():
 
 @app.route("/category/<name>")
 def category(name):
-    random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
     if name != "all":
         entries = db.session.query(db.Books).filter(db.Books.tags.any(db.Tags.name.like("%" +name + "%" ))).order_by(db.Books.last_modified.desc()).all()
     else:
         entries = db.session.query(db.Books).all()
-    return render_template('index.html', random=random, entries=entries, title="Category: %s" % name)
+    return render_template('index.html', entries=entries, title="Category: %s" % name)
 
 @app.route("/series/<name>")
 def series(name):
-    random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
     entries = db.session.query(db.Books).filter(db.Books.series.any(db.Series.name.like("%" +name + "%" ))).order_by(db.Books.series_index).all()
-    return render_template('index.html', random=random, entries=entries, title="Series: %s" % name)
+    return render_template('index.html', entries=entries, title="Series: %s" % name)
 
 
 @app.route("/admin/")
@@ -296,7 +292,6 @@ def admin():
 def search():
     term = request.args.get("query")
     if term:
-        random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
         entries = db.session.query(db.Books).filter(db.or_(db.Books.tags.any(db.Tags.name.like("%"+term+"%")),db.Books.series.any(db.Series.name.like("%"+term+"%")),db.Books.authors.any(db.Authors.name.like("%"+term+"%")),db.Books.title.like("%"+term+"%"))).all()
         return render_template('search.html', searchterm=term, entries=entries)
     else:
@@ -309,9 +304,8 @@ def author_list():
 
 @app.route("/author/<name>")
 def author(name):
-    random = db.session.query(db.Books).order_by(func.random()).limit(config.RANDOM_BOOKS)
     entries = db.session.query(db.Books).filter(db.Books.authors.any(db.Authors.name.like("%" +  name + "%"))).all()
-    return render_template('index.html', random=random, entries=entries, title="Author: %s" % name)
+    return render_template('index.html', entries=entries, title="Author: %s" % name)
 
 @app.route("/cover/<path:cover_path>")
 def get_cover(cover_path):

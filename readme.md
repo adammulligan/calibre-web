@@ -1,10 +1,10 @@
-This is an in-progress fork of [calibreserver](https://bitbucket.org/raphaelmutschler/calibreserver)  by Raphael Mutschler.
-
-A working Docker image is available here: [janeczku/calibre-web](https://registry.hub.docker.com/u/janeczku/calibre-web/).
-
 ##About
 
 Calibre Web is a Python web app providing a clean interface for browsing, reading and downloading e-books from a Calibre e-book database.
+
+This was originally forked from [calibreserver](https://bitbucket.org/raphaelmutschler/calibreserver) and now includes additional features as well as many bugfixes.
+
+Also available as [Docker image](https://registry.hub.docker.com/u/janeczku/calibre-web/).
 
 ![screenshot](https://raw.githubusercontent.com/janeczku/docker-calibre-web/master/screenshot.png)
 
@@ -18,14 +18,16 @@ Calibre Web is a Python web app providing a clean interface for browsing, readin
 - Support for editing eBook metadata
 - Support for converting eBooks from EPUB to Kindle format (mobi/azw)
 - Restrict eBook download to logged-in users
+- Support for public user registration
 - Send eBooks to Kindle devices with the click of a button
 - Support for reading eBooks directly in the browser
+- Upload new books in PDF format
 
 ## Quick start
 
-1. Execute the command: `python cps.py` (it will throw an error)
-2. Edit config.ini and set DB_ROOT to the path of the folder where your Calibre library (metadata.db) lives
-3. If you want to enable public user registration set PUBLIC_REG to 1
+1. Rename `config.ini.example` to `config.ini` and set DB_ROOT to the path of the folder where your Calibre library (metadata.db) lives
+2. To enable public user registration set PUBLIC_REG to 1
+3. To enable uploading of PDF books set UPLOADING to 1
 4. Execute the command: `python cps.py`
 5. Point your browser to `http://localhost:8083` or `http://localhost:8083/feed` for the OPDS catalog 
 

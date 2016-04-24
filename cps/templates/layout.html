@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>library | {{title}}</title>
+    <title>calibre web | {{title}}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <!-- Bootstrap -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" media="screen">
 
@@ -17,8 +18,26 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/underscore.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intention.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/context.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        {% block header %}{% endblock %}
   </head>
   <body>
+    <script>
+      $(document).ready(function(){
+        $("#btn-upload").change(function() {
+          $("#form-upload").submit();
+        });
+      });
+    </script>  
     <!-- Static navbar -->
     <div class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container-fluid">
@@ -44,6 +63,17 @@
           </ul>
           <ul class="nav navbar-nav navbar-right" id="main-nav">
             {% if g.user.is_authenticated() %}
+              {% if g.user.role %}
+              {% if g.allow_upload %}
+                  <li>
+                    <form id="form-upload" class="navbar-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                      <div class="form-group">
+                        <span class="btn btn-default btn-file">Upload <input id="btn-upload" name="btn-upload" type="file"></span>
+                      </div>
+                    </form>
+                  </li>
+              {% endif %}
+              {% endif %}
               {% if g.user.role %}
                 <li><a href="{{url_for('user_list')}}"><span class="glyphicon glyphicon-dashboard"></span> Admin</a></li>
               {% endif %}
@@ -126,14 +156,6 @@
         </div>
       </div>
     </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/underscore.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/intention.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/context.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block js %}{% endblock %}
   </body>
 </html>
